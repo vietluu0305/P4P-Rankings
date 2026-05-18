@@ -122,7 +122,7 @@
         <div class="fighter-card" onclick="showDetail(${i})">
           <div class="fighter-rank">${f.rank}</div>
           <div class="fighter-img-wrap">
-            <img src="assets/${f.image}" onerror="this.parentElement.innerHTML='<div class=fighter-img-placeholder>🥊</div>'" alt="${f.name}"/>
+            <img src="${f.image}" onerror="this.parentElement.innerHTML='<div class=fighter-img-placeholder>🥊</div>'" alt="${f.name}"/>
           </div>
           <div class="fighter-info">
             <div class="fighter-name">${f.name}</div>
@@ -157,7 +157,7 @@
       document.getElementById('d-lastfight').className = 'stat-value-sm ' + (f.lastFightWin ? 'win' : 'loss');
 
       const imgWrap = document.getElementById('detailImgWrap');
-      imgWrap.innerHTML = `<img src="assets/${f.detailImage}" onerror="this.parentElement.innerHTML='<div class=img-placeholder>🥊</div>'" alt="${f.name}"/>`;
+      imgWrap.innerHTML = `<img src="${f.detailImage}" onerror="this.parentElement.innerHTML='<div class=img-placeholder>🥊</div>'" alt="${f.name}"/>`;
 
       document.getElementById('detailPage').style.display = 'block';
     }
