@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>P4P Rankings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Bahnschrift', 'Arial Narrow', Arial, sans-serif; background: #0A0A0A; color: white; }
+
+    /* INTRO */
+    .intro-page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 12px; }
+    .intro-title { font-size: 72px; font-weight: 900; color: #C9A84C; letter-spacing: -2px; line-height: 1; }
+    .intro-sub { font-size: 13px; color: white; letter-spacing: 6px; margin-top: -8px; }
+    .intro-btn { margin-top: 16px; background: transparent; border: 1px solid #C9A84C; color: #C9A84C; padding: 14px 36px; font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 5px; cursor: pointer; border-radius: 8px; transition: background 0.2s; }
+    .intro-btn:hover { background: rgba(201,168,76,0.1); }
+
+    /* RANKINGS */
+    .rankings-page { display: none; padding: 0 0 48px; min-height: 100vh; }
+    .rankings-title { font-size: 80px; font-weight: 900; color: white; text-align: center; padding: 32px 0 20px; letter-spacing: 2px; font-family: Impact, 'Arial Narrow', sans-serif; }
+    .fighter-list { display: flex; flex-direction: column; gap: 10px; padding: 0 32px; max-width: 1000px; margin: 0 auto; }
+    .fighter-card { background: #161616; border: 1px solid #2A2A2A; border-radius: 8px; padding: 16px 20px; cursor: pointer; display: grid; grid-template-columns: 64px 100px 1fr 200px; align-items: center; transition: border-color 0.2s, background 0.2s; }
+    .fighter-card:hover { border-color: #C9A84C; background: #1e1e1e; }
+    .fighter-rank { font-size: 42px; font-weight: 900; color: #C9A84C; }
+    .fighter-img-wrap { display: flex; align-items: flex-end; height: 90px; }
+    .fighter-img-wrap img { height: 90px; object-fit: contain; }
+    .fighter-img-placeholder { width: 60px; height: 90px; background: #2a2a2a; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+    .fighter-info { padding-left: 16px; }
+    .fighter-name { font-size: 20px; font-weight: 900; color: white; letter-spacing: 0.5px; }
+    .fighter-class { font-size: 13px; color: #888; margin: 2px 0; }
+    .fighter-record { font-size: 15px; font-weight: 700; color: #C9A84C; }
+    .fighter-meta { text-align: right; }
+    .fighter-country { font-size: 13px; color: #888; }
+    .fighter-reach { font-size: 13px; color: #888; margin: 2px 0; }
+    .last-fight-label { font-size: 10px; color: #555; letter-spacing: 3px; font-weight: 700; margin-top: 6px; }
+    .last-fight-result { font-size: 12px; margin-top: 2px; }
+    .win { color: #27AE60; }
+    .loss { color: #E74C3C; }
+
+    /* DETAIL */
+    .detail-page { display: none; min-height: 100vh; background: #0D0D0D; }
+    .detail-grid { display: grid; grid-template-columns: 1fr auto; min-height: 100vh; }
+    .detail-left { padding: 48px 0 48px 64px; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+    .detail-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge { border: 1px solid #444; border-radius: 4px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: white; }
+    .detail-name { font-size: 48px; font-weight: 900; color: white; line-height: 1.1; }
+    .detail-country { font-size: 14px; color: #888; }
+    .detail-record { font-size: 18px; font-weight: 700; color: white; margin-top: 2px; }
+    .stats-row { display: flex; gap: 40px; margin-top: 8px; }
+    .stat-block { display: flex; flex-direction: column; gap: 6px; }
+    .stat-value { font-size: 36px; font-weight: 900; color: white; }
+    .stat-line { width: 40px; height: 2px; background: #C0392B; }
+    .stat-label { font-size: 11px; color: #888; letter-spacing: 4px; font-weight: 700; }
+    .stat-value-sm { font-size: 16px; font-weight: 700; }
+    .back-btn { background: transparent; border: 1px solid #444; color: white; padding: 10px 20px; font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 3px; cursor: pointer; border-radius: 4px; margin-top: 16px; transition: border-color 0.2s; width: fit-content; }
+    .back-btn:hover { border-color: #888; }
+    .detail-right { display: flex; align-items: flex-end; overflow: hidden; }
+    .detail-right img { height: 90vh; max-height: 700px; object-fit: contain; display: block; }
+    .detail-right .img-placeholder { width: 240px; height: 600px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 80px; }
+  </style>
+</head>
+<body>
+
+  <!-- INTRO PAGE -->
+  <div class="intro-page" id="introPage">
+    <div class="intro-title">FIGHTER STATS</div>
+    <div class="intro-sub">POUND-FOR-POUND RANKINGS</div>
+    <button class="intro-btn" onclick="showRankings()">ENTER P4P RANKINGS</button>
+  </div>
+
+  <!-- RANKINGS PAGE -->
+  <div class="rankings-page" id="rankingsPage">
+    <div class="rankings-title">P4P RANKINGS</div>
+    <div class="fighter-list" id="fighterList"></div>
+  </div>
+
+  <!-- DETAIL PAGE -->
+  <div class="detail-page" id="detailPage">
+    <div class="detail-grid">
+      <div class="detail-left">
+        <div class="detail-badges">
+          <span class="badge" id="d-weightclass"></span>
+          <span class="badge">ACTIVE</span>
+          <span class="badge">TITLE HOLDER</span>
+        </div>
+        <div class="detail-name" id="d-name"></div>
+        <div>
+          <div class="detail-country" id="d-country"></div>
+          <div class="detail-record" id="d-record"></div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-block">
+            <div class="stat-value" id="d-reach"></div>
+            <div class="stat-line"></div>
+            <div class="stat-label">REACH</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value-sm" id="d-lastfight"></div>
+            <div class="stat-line"></div>
+            <div class="stat-label">LAST FIGHT</div>
+          </div>
+        </div>
+        <button class="back-btn" onclick="showRankings()">← BACK TO RANKINGS</button>
+      </div>
+      <div class="detail-right" id="detailImgWrap">
+        <div class="img-placeholder">🥊</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fighters = [
+      { rank: '01', name: 'ISLAM MAKHACHEV', weightClass: 'Lightweight', record: '26-3-0', country: '🇷🇺 Russia', reach: '70.5"', lastFight: 'W · Tsarukyan · UFC 311', lastFightWin: true, image: 'islam.png', detailImage: 'islam_detail.png' },
+      { rank: '02', name: 'ILIA TOPURIA', weightClass: 'Featherweight', record: '16-0-0', country: '🇬🇪 Georgia', reach: '71"', lastFight: 'W · Oliveira · UFC 317', lastFightWin: true, image: 'topuria.png', detailImage: 'topuria.png' },
+      { rank: '03', name: 'ALEX PEREIRA', weightClass: 'Light Heavyweight', record: '12-2-0', country: '🇧🇷 Brazil', reach: '79"', lastFight: 'W · Ankalaev · UFC 313', lastFightWin: true, image: 'alex.png', detailImage: 'alex.png' },
+      { rank: '04', name: 'ALEXANDER VOLKANOVSKI', weightClass: 'Featherweight', record: '26-4-0', country: '🇦🇺 Australia', reach: '71.5"', lastFight: 'L · Topuria · UFC 298', lastFightWin: false, image: 'volk.png', detailImage: 'volk.png' },
+    ];
+
+    function renderFighters() {
+      const list = document.getElementById('fighterList');
+      list.innerHTML = fighters.map((f, i) => `
+        <div class="fighter-card" onclick="showDetail(${i})">
+          <div class="fighter-rank">${f.rank}</div>
+          <div class="fighter-img-wrap">
+            <img src="assets/${f.image}" onerror="this.parentElement.innerHTML='<div class=fighter-img-placeholder>🥊</div>'" alt="${f.name}"/>
+          </div>
+          <div class="fighter-info">
+            <div class="fighter-name">${f.name}</div>
+            <div class="fighter-class">${f.weightClass}</div>
+            <div class="fighter-record">${f.record}</div>
+          </div>
+          <div class="fighter-meta">
+            <div class="fighter-country">${f.country}</div>
+            <div class="fighter-reach">REACH: ${f.reach}</div>
+            <div class="last-fight-label">LAST FIGHT</div>
+            <div class="last-fight-result ${f.lastFightWin ? 'win' : 'loss'}">${f.lastFight}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showRankings() {
+      document.getElementById('introPage').style.display = 'none';
+      document.getElementById('detailPage').style.display = 'none';
+      document.getElementById('rankingsPage').style.display = 'block';
+    }
+
+    function showDetail(i) {
+      const f = fighters[i];
+      document.getElementById('rankingsPage').style.display = 'none';
+      document.getElementById('d-name').textContent = f.name;
+      document.getElementById('d-weightclass').textContent = f.weightClass;
+      document.getElementById('d-country').textContent = f.country;
+      document.getElementById('d-record').textContent = f.record;
+      document.getElementById('d-reach').textContent = f.reach;
+      document.getElementById('d-lastfight').textContent = f.lastFight;
+      document.getElementById('d-lastfight').className = 'stat-value-sm ' + (f.lastFightWin ? 'win' : 'loss');
+
+      const imgWrap = document.getElementById('detailImgWrap');
+      imgWrap.innerHTML = `<img src="assets/${f.detailImage}" onerror="this.parentElement.innerHTML='<div class=img-placeholder>🥊</div>'" alt="${f.name}"/>`;
+
+      document.getElementById('detailPage').style.display = 'block';
+    }
+
+    renderFighters();
+  </script>
+</body>
+</html>
